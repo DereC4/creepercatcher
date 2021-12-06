@@ -74,8 +74,7 @@ class defNotACreeper(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
     def explode(self):
-        self.surf = pygame.Surface((20, 10))
-        self.surf.fill((255, 255, 255))
+        self.surf = pygame.image.load("assets/enemy.png").convert()
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
@@ -90,9 +89,10 @@ class Score():
         self.score = 0
         self.font = pygame.font.SysFont(None,100)
     def update(self, score):
+        self.score = score
         self.scoredraw = self.font.render(str(self.score), True, (255, 255, 255), (255, 0, 255))
     def draw(self):
-        display.blit(self.score,(WIDTH/4,HEIGHT/4))
+        win.blit(self.scoredraw,(SCREEN_WIDTH/4,SCREEN_HEIGHT/4))
 def main():
     score = 0
     pygame.init()
@@ -125,7 +125,7 @@ def main():
         aGroup.draw(win)
         pygame.display.update()
         fpsClock.tick(30)
-        win.fill((0, 0, 0))
+        win.fill((61, 109, 135))
         for entity in enemies:
             win.blit(entity.surf, entity.rect)
             gets_hit = pygame.sprite.spritecollide(player, enemies, True)
