@@ -5,7 +5,7 @@ import time
 import random
 import math
 import pygame.freetype
-
+ 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
