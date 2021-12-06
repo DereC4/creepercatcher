@@ -85,7 +85,14 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-
+class Score():
+    def __init__(self):
+        self.score = 0
+        self.font = pygame.font.SysFont(None,100)
+    def update(self, score):
+        self.scoredraw = self.font.render(str(self.score), True, (255, 255, 255), (255, 0, 255))
+    def draw(self):
+        display.blit(self.score,(WIDTH/4,HEIGHT/4))
 def main():
     score = 0
     pygame.init()
@@ -102,7 +109,8 @@ def main():
     enemies = pygame.sprite.Group()
     ADDENEMY = pygame.USEREVENT + 1
     pygame.time.set_timer(ADDENEMY, 250)
-
+    score1 = Score()
+    score1.__init__
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -121,10 +129,12 @@ def main():
         for entity in enemies:
             win.blit(entity.surf, entity.rect)
             gets_hit = pygame.sprite.spritecollide(player, enemies, True)
-            if get_hit:
+            if gets_hit:
                 score+=1
             running = False
         enemies.update()
+        score1.update(score)
+        score1.draw()
 
 if __name__ == '__main__':
     main()
