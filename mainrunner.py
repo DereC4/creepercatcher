@@ -8,13 +8,16 @@ import pygame.freetype
  
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
+
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Derex Explorer")
+
 x = 0
 y = 0
 height = 50
 width = 50
 speed = 5
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
@@ -66,9 +69,9 @@ class defNotACreeper(pygame.sprite.Sprite):
             )
         )
         self.speed = random.randint(3, 7)
+        if(self.speed > 5):
+            self.surf = pygame.image.load("assets/redenemy.jpg").convert()
 
-    # Move the sprite based on speed
-    # Remove the sprite when it passes the left edge of the screen
     def update(self):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
@@ -84,15 +87,17 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
 class Score():
     def __init__(self):
         self.score = 0
         self.font = pygame.font.SysFont(None,100)
     def update(self, score):
         self.score = score
-        self.scoredraw = self.font.render(str(self.score), True, (255, 255, 255), (255, 0, 255))
+        self.scoredraw = self.font.render(("Score: " + str(self.score)), True, (255, 255, 255), (61, 109, 135))
     def draw(self):
-        win.blit(self.scoredraw,(SCREEN_WIDTH/4,SCREEN_HEIGHT/4))
+        win.blit(self.scoredraw,(0,0))
+
 def main():
     score = 0
     pygame.init()
@@ -112,6 +117,10 @@ def main():
     score1 = Score()
     score1.__init__
     while True:
+
+        score1.update(score)
+        score1.draw()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -123,18 +132,18 @@ def main():
         pressed_keys = pygame.key.get_pressed()
         aGroup.update(pressed_keys)
         aGroup.draw(win)
-        pygame.display.update()
-        fpsClock.tick(30)
-        win.fill((61, 109, 135))
+
         for entity in enemies:
             win.blit(entity.surf, entity.rect)
             gets_hit = pygame.sprite.spritecollide(player, enemies, True)
             if gets_hit:
                 score+=1
-            running = False
+            # running = False
+    
         enemies.update()
-        score1.update(score)
-        score1.draw()
+        pygame.display.update()
+        fpsClock.tick(60)
+        win.fill((61, 109, 135))
 
 if __name__ == '__main__':
     main()
