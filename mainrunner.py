@@ -10,13 +10,14 @@ SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Derex Explorer")
+pygame.display.set_caption("Creeper Catcher")
 
 x = 0
 y = 0
 height = 50
 width = 50
 speed = 5
+score = 0
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -73,11 +74,14 @@ class defNotACreeper(pygame.sprite.Sprite):
             self.surf = pygame.image.load("assets/redenemy.jpg").convert()
 
     def update(self):
+        global score 
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
+            if self.speed > 5:
+                score -= 1
     def explode(self):
-        self.surf = pygame.image.load("assets/enemy.png").convert()
+        self.surf = pygame.image.load("assets/explosion.png").convert()
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
@@ -99,8 +103,8 @@ class Score():
         win.blit(self.scoredraw,(0,0))
 
 def main():
-    score = 0
     pygame.init()
+    global score
     player = Player()
     win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     aGroup = pygame.sprite.Group(player)
@@ -116,8 +120,9 @@ def main():
     pygame.time.set_timer(ADDENEMY, 250)
     score1 = Score()
     score1.__init__
-    while True:
 
+    while True:
+    
         score1.update(score)
         score1.draw()
 
@@ -139,7 +144,7 @@ def main():
             if gets_hit:
                 score+=1
             # running = False
-    
+
         enemies.update()
         pygame.display.update()
         fpsClock.tick(60)
