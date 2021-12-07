@@ -9,6 +9,8 @@ from tkinter import *
 from tkinter import messagebox
 import time
 
+# This is a variation for my mother's birthday
+
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
 

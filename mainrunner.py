@@ -9,7 +9,7 @@ from tkinter import *
 from tkinter import messagebox
 import time
 
-SCREEN_WIDTH = 500
+SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 500
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -65,19 +65,27 @@ def drawLastPost(x, y, width, height):
 
 class defNotACreeper(pygame.sprite.Sprite):
     def __init__(self):
+        global score
         super(defNotACreeper, self).__init__()
         self.surf = pygame.image.load("assets/enemy.png").convert()
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
-                random.randint(0, SCREEN_HEIGHT),
-            )
+                random.randint(SCREEN_HEIGHT/2+100,SCREEN_HEIGHT),
+            ) 
         )
-        self.speed = random.randint(3, 7)
+        if score > 20:
+            self.speed = random.randint(score-18, score-10)
+        else:
+            self.speed = random.randint(3, 7)
         self.hardEnemy = False
+        self.superHardEnemy = False
         if(self.speed > 5):
             self.hardEnemy = True
             self.surf = pygame.image.load("assets/redenemy.jpg").convert()
+        if(self.speed > 10):
+            self.superHardEnemy = True
+            self.surf = pygame.image.load("assets/stoneblueenemy.jpg").convert()
 
     def update(self):
         global score 
@@ -86,6 +94,8 @@ class defNotACreeper(pygame.sprite.Sprite):
             self.kill()
             if self.hardEnemy:
                 score -= 1
+            if self.superHardEnemy:
+                score -= 2
     
     def explode(self):
         self.surf = pygame.image.load("assets/explosion.png").convert()
@@ -96,6 +106,7 @@ class defNotACreeper(pygame.sprite.Sprite):
             score += 5
         else:
             score += 1
+
 class Tile(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -108,20 +119,70 @@ class Tile(pygame.sprite.Sprite):
 class Score():
     def __init__(self):
         self.score = 0
-        self.font = pygame.font.SysFont(None,100)
+        self.font = pygame.font.SysFont(None,50)
     def update(self, score):
         self.score = score
         self.scoredraw = self.font.render(("Score: " + str(self.score)), True, (255, 255, 255), (61, 109, 135))
     def draw(self):
-        win.blit(self.scoredraw,(0,0))
+        win.blit(self.scoredraw,(0,SCREEN_HEIGHT-30))
 
+class Background():
+    def __init__(self):
+        self.bgimage = pygame.image.load('assets/tempbackground.png')
+        self.rectBGimg = self.bgimage.get_rect()
+
+        self.bgY1 = -50
+        self.bgX1 = 0
+
+        self.bgY2 = -50
+        self.bgX2 = self.rectBGimg.width
+
+        self.moving_speed = 5
+        
+    def update(self):
+        self.bgX1 -= self.moving_speed
+        self.bgX2 -= self.moving_speed
+        if self.bgX1 <= -self.rectBGimg.width:
+            self.bgX1 = self.rectBGimg.width
+        if self.bgX2 <= -self.rectBGimg.width:
+            self.bgX2 = self.rectBGimg.width
+            
+    def render(self):
+        win.blit(self.bgimage, (self.bgX1, self.bgY1))
+        win.blit(self.bgimage, (self.bgX2, self.bgY2))
+
+class Background2():
+    def __init__(self):
+        self.bgimage = pygame.image.load('assets/tempbackground.jpg')
+        self.rectBGimg = self.bgimage.get_rect()
+
+        self.bgY1 = 290
+        self.bgX1 = 0
+
+        self.bgY2 = 290
+        self.bgX2 = self.rectBGimg.width
+
+        self.moving_speed = 5
+        
+    def update(self):
+        self.bgX1 -= self.moving_speed
+        self.bgX2 -= self.moving_speed
+        if self.bgX1 <= -self.rectBGimg.width:
+            self.bgX1 = self.rectBGimg.width
+        if self.bgX2 <= -self.rectBGimg.width:
+            self.bgX2 = self.rectBGimg.width
+            
+    def render(self):
+        win.blit(self.bgimage, (self.bgX1, self.bgY1))
+        win.blit(self.bgimage, (self.bgX2, self.bgY2))
+        
 def makePopup():
     root = Tk()
     root.geometry('471x687')
-    root.title("Happy Birthday Mom!")
+    root.title("You Won!")
     root.resizable(False, False)
 
-    bg = PhotoImage(file = "assets/momcard.png")
+    bg = PhotoImage(file = "assets/explosion.png")
     label1 = Label( root, image = bg)
     label1.place(x = 0, y = 0)
 
@@ -144,7 +205,8 @@ def main():
     win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     aGroup = pygame.sprite.Group(player)
     fpsClock = pygame.time.Clock()
-
+    background = Background()
+    background2 = Background2()
     # for x in range (1000):
     #     for y in range(750):
     #         pygame.draw.rect(win, (255,255,255), rect=(0,0,64,64))
@@ -154,10 +216,12 @@ def main():
     ADDENEMY = pygame.USEREVENT + 1
     pygame.time.set_timer(ADDENEMY, 250)
     score1 = Score()
-    score1.__init__
 
     while True:
-    
+        background.update()
+        background.render()
+        background2.update()
+        background2.render()
         score1.update(score)
         score1.draw()
 
@@ -182,7 +246,6 @@ def main():
                 if score >= 20 and not displayedPopupYet:
                     makePopup()
                     displayedPopupYet = True
-            # running = False
 
         enemies.update()
         pygame.display.update()
