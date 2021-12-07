@@ -1,58 +1,70 @@
-import pygame 
-import math
+from tkinter import * 
+from tkinter import messagebox
+import time
 
-def findnoise2(x,y):
-	n = int(x) + int(y) * 57
-	allf = 0xFFFFFFFF
-	an = (n << 13) & allf
-	n = (an ^ n) & allf
-	nn = (n*(n*n*60493+19990303)+1376312589)&0x7fffffff
-	return 1.0-(float(nn)/1073741824.0);
+root = Tk()
+root.geometry('720x1039')
+root.title("Tic Tac Toe")
+root.resizable(False, False)
 
-def interpolate( a, b, x):
-	ft = float(x * 3.1415927)
-	f = float((1.0-math.cos(ft))* 0.5)
-	return a*(1.0-f)+b*f;
+bg = PhotoImage(file = "card.png")
+label1 = Label( root, image = bg)
+label1.place(x = 0, y = 0)
+  
+# Create Frame
+frame1 = Frame(root)
+frame1.pack(pady = 20 )
+size = 20
+count = 0
+def byeButton():
+    global size, count
+    if(count<10):
+        # print('hi')
+        size -=2
+        count += 1
+        b1.config(font=("Helvetica",size))
+        if(count<9):
+            root.after(15,byeButton)
+        else:
+            b1.destroy()
 
-def noise(x,y):
-	floorx = float(int(x))
-	floory = float(int(y))
-	s=findnoise2(floorx,floory) 
-	t=findnoise2(floorx+1,floory)
-	u=findnoise2(floorx,floory+1) 
-	v=findnoise2(floorx+1,floory+1)
-	int1=interpolate(s,t,x-floorx) 
-	int2=interpolate(u,v,x-floorx)
-	return interpolate(int1,int2,y-floory) 
 
-def main():
-	pygame.init()
-	screen = pygame.display.set_mode((600, 480))
-	clock = pygame.time.Clock()
-	noiseimage = pygame.Surface(screen.get_size())
-	noiseimage.fill((120,40,120))
-	scale1 = 2.0
-	scale2 = 4.0
-	scale3 = 8.0
-	for w in range(0, noiseimage.get_width()):
-		for h in range(0, noiseimage.get_height()):
-			i = int((noise(w/scale1,h/scale1)+1.0) * 42)
-			i += int((noise(w/scale2,h/scale2)+1.0) * 42)
-			i += int((noise(w/scale3,h/scale3)+1.0) * 42)
-			if(i>255):
-				i=255
-			if(i<0):
-				i=0
-			noiseimage.set_at((w,h),(i,i,i))
-	screen.blit(noiseimage, (0,0))
-	pygame.display.flip()
-	while 1:
-		clock.tick(60)
-            for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					return
-		screen.blit(noiseimage, (0,0))
-		pygame.display.update()
+def reset():
+    global b1, b2, b3, b4, b5, b6, b7, b8, b9
+    global clicked, count, size
+    clicked = True
+    count = 0
+    size = 20
+    # Buttons
+    b1 = Button(root, text = "Click me!", font=("Helvetica",20), activebackground='#12DEF5', height=40, width = 45, bg = "SystemButtonFace", command=lambda: byeButton())
+    # b2 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b2))
+    # b3 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b3))
+    # b4 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b4))
+    # b5 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b5))
+    # b6 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b6))
+    # b7 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b7))
+    # b8 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b8))
+    # b9 = Button(root, text = " ", font=("Helvetica",20), activebackground='#12DEF5', height=3, width = 100, bg = "SystemButtonFace", command=lambda: byeButton(b9))
+    # # Grid
+    b1.place(relx=0.5, rely=0.5, anchor=CENTER)
+    # b2.place(x=0,y=120)
+    # b3.place(x=0,y=240)
+    # b4.place(x=0,y=360)
+    # b5.place(x=0,y=480)
+    # b6.place(x=0,y=600)
+    # b7.place(x=0,y=720)
+    # b8.place(x=0,y=840)
+    # b9.place(x=0,y=960)
 
-if __name__ =='__main__': 
-  main()
+def exit():
+    root.destroy()
+
+mainMenu = Menu(root)
+root.config(menu=mainMenu)
+optionsMenu = Menu(mainMenu, tearoff= False)
+mainMenu.add_cascade(label="Options", menu = optionsMenu)
+optionsMenu.add_command(label="Restart Card", command = reset)
+optionsMenu.add_command(label="Exit Card", command = exit)
+
+reset()
+root.mainloop()
