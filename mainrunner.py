@@ -71,7 +71,7 @@ class defNotACreeper(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
-                random.randint(SCREEN_HEIGHT/2+100,SCREEN_HEIGHT),
+                random.randint(SCREEN_HEIGHT/2+100,SCREEN_HEIGHT-10),
             ) 
         )
         if score > 20:
@@ -83,7 +83,7 @@ class defNotACreeper(pygame.sprite.Sprite):
         if(self.speed > 5):
             self.hardEnemy = True
             self.surf = pygame.image.load("assets/redenemy.jpg").convert()
-        if(self.speed > 10):
+        if(self.speed > 15):
             self.superHardEnemy = True
             self.surf = pygame.image.load("assets/stoneblueenemy.jpg").convert()
 
