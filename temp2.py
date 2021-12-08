@@ -1,20 +1,16 @@
 from tkinter import * 
 from tkinter import messagebox
 import time
-
+import tkinter
 root = Tk()
 root.geometry('471x687')
-root.title("Happy Birthday Mom!")
 root.resizable(False, False)
-
-bg = PhotoImage(file = "assets/momcard.png")
-label1 = Label( root, image = bg)
-label1.place(x = 0, y = 0)
-
-# Create Frame
+root.title("Victory!!!")
+root.geometry('852x480')
+bg = PhotoImage(file = "assets/youwin.png")
+B = tkinter.Button(root, text ="Hello")
+B.pack()
 frame1 = Frame(root)
 frame1.pack(pady = 20 )
-size = 20    
-
 
 root.mainloop()

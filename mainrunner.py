@@ -1,10 +1,8 @@
 import pygame
 from pygame.locals import *
-import sys
-import time
 import random
-import math
 import pygame.freetype
+import tkinter
 from tkinter import * 
 from tkinter import messagebox
 import time
@@ -23,6 +21,7 @@ speed = 5
 score = 0
 displayedPopupYet = False
 displayedPopupYet2 = False
+displayedPopupYet3 = False
 totalscore = 0
 
 # with open("scores.txt", "r", encoding="utf-16") as file:
@@ -87,13 +86,12 @@ class defNotACreeper(pygame.sprite.Sprite):
             self.speed = random.randint(score-18, score-10)
         else:
             self.speed = random.randint(3, 7)
-        self.hardEnemy = False
-        self.superHardEnemy = False
+        self.difficulty = "normal"
         if(self.speed > 5):
-            self.hardEnemy = True
+            self.difficulty = "hard"
             self.surf = pygame.image.load("assets/redenemy.jpg").convert()
         if(self.speed > 15):
-            self.superHardEnemy = True
+            self.difficulty = "super hard"
             self.surf = pygame.image.load("assets/stoneblueenemy.jpg").convert()
 
     def update(self):
@@ -101,9 +99,9 @@ class defNotACreeper(pygame.sprite.Sprite):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
-            if self.hardEnemy:
+            if self.difficulty=='hard':
                 score -= 1
-            if self.superHardEnemy:
+            if self.difficulty=="super hard":
                 score -= 2
     
     def explode(self):
@@ -111,19 +109,13 @@ class defNotACreeper(pygame.sprite.Sprite):
 
     def calcScore(self):
         global score
-        if self.hardEnemy:
-            score += 5
+        if self.difficulty=="hard":
+            score += 1
         else:
             score += 1
-
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+    
+    def getDifficulty(self):
+        return self.difficulty
 
 class Score():
     def __init__(self):
@@ -136,7 +128,7 @@ class Score():
         global totalscore
         win.blit(self.scoredraw,(0,SCREEN_HEIGHT-30))
         if(self.score>totalscore):
-            totalscore = self.score()
+            totalscore = self.score
         # if(self.score>highscore):
         #     file = open("scores.txt","r+")
         #     file.truncate(0)
@@ -194,41 +186,47 @@ class Background2():
         win.blit(self.bgimage, (self.bgX1, self.bgY1))
         win.blit(self.bgimage, (self.bgX2, self.bgY2))
         
+def resetGame():
+    global score, totalscore, displayedPopupYet, displayedPopupYet2, displayedPopupYet3
+    displayedPopupYet = False
+    displayedPopupYet2 = False
+    displayedPopupYet3 = False
+    score = 0
+    totalscore = 0
 def makePopup():
+    global score 
     root = Tk()
     root.geometry('471x687')
-    root.title("20 points!")
     root.resizable(False, False)
+    bg = PhotoImage(file = "assets/face1.png")
 
-    bg = PhotoImage(file = "assets/explosion.png")
+    if (score > 19):
+        root.title("20 points!")
+        bg = PhotoImage(file = "assets/explosion.png")
+
+    if (score >= 40):
+        root.title("Victory!!!")
+        root.geometry('852x480')
+        bg = PhotoImage(file = "assets/youwin.png")
+        # B = tkinter.Button(root, text ="Reset this world", command = resetGame())
+        # B.pack()
+
+    if (score >= 61):
+        root.title("Victory!!!")
+        root.geometry('1280x720')
+        bg = PhotoImage(file = "assets/secretending.png")
+
     label1 = Label( root, image = bg)
     label1.place(x = 0, y = 0)
 
     # Create Frame
     frame1 = Frame(root)
     frame1.pack(pady = 20 )
-    size = 20    
 
-    root.mainloop()
-
-def makePopup2():
-    root = Tk()
-    root.geometry('471x687')
-    root.title("You Won!")
-    root.resizable(False, False)
-
-    bg = PhotoImage(file = "assets/youwin.jpg")
-    label1 = Label( root, image = bg)
-    label1.place(x = 0, y = 0)
-
-    # Create Frame
-    frame1 = Frame(root)
-    frame1.pack(pady = 20 )
-    size = 20    
     root.mainloop()
 
 def main():
-    global displayedPopupYet
+    global displayedPopupYet, displayedPopupYet2, displayedPopupYet3
     pygame.init()
     global score, totalscore
     player = Player()
@@ -248,6 +246,16 @@ def main():
     score1 = Score()
 
     while True:
+        if score >= 21 and not displayedPopupYet:
+            makePopup()
+            displayedPopupYet = True
+        if score >= 40 and not displayedPopupYet2:
+            makePopup()
+            displayedPopupYet2 = True
+        if score >= 61 and not displayedPopupYet3:
+            makePopup()
+            displayedPopupYet3 = True
+
         background.update()
         background.render()
         background2.update()
@@ -272,13 +280,13 @@ def main():
             gets_hit = pygame.sprite.spritecollide(player, enemies, True)
             if gets_hit:
                 score += 1
+                # print(entity.getDifficulty())
+                if(entity.getDifficulty()=="hard"):
+                    score += 1
+                elif(entity.getDifficulty()=="super hard"):
+                    score += 2
                 # entity.explode()
-                if score >= 20 and not displayedPopupYet:
-                    makePopup()
-                    displayedPopupYet = True
-                if score >= 40 and not displayedPopup2Yet:
-                    makePopup2()
-                    displayedPopup2Yet = True
+
         enemies.update()
         pygame.display.update()
         fpsClock.tick(60)
