@@ -22,6 +22,15 @@ width = 50
 speed = 5
 score = 0
 displayedPopupYet = False
+displayedPopupYet2 = False
+totalscore = 0
+
+# with open("scores.txt", "r", encoding="utf-16") as file:
+#     scores = file.readlines()
+# highscore = scores[0].replace("highscore: ","")
+# print(int(scores[0]))
+# highscore = int(scores[0])
+# print(int(highscore))
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -124,7 +133,16 @@ class Score():
         self.score = score
         self.scoredraw = self.font.render(("Score: " + str(self.score)), True, (255, 255, 255), (61, 109, 135))
     def draw(self):
+        global totalscore
         win.blit(self.scoredraw,(0,SCREEN_HEIGHT-30))
+        if(self.score>totalscore):
+            totalscore = self.score()
+        # if(self.score>highscore):
+        #     file = open("scores.txt","r+")
+        #     file.truncate(0)
+        #     file.write(str(self.score))
+        #     highscore = self.score()
+        #     file.close()
 
 class Background():
     def __init__(self):
@@ -179,7 +197,7 @@ class Background2():
 def makePopup():
     root = Tk()
     root.geometry('471x687')
-    root.title("You Won!")
+    root.title("20 points!")
     root.resizable(False, False)
 
     bg = PhotoImage(file = "assets/explosion.png")
@@ -190,17 +208,29 @@ def makePopup():
     frame1 = Frame(root)
     frame1.pack(pady = 20 )
     size = 20    
-    # mainMenu = Menu(root)
-    # root.config(menu=mainMenu)
-    # optionsMenu = Menu(mainMenu, tearoff= False)
-    # mainMenu.add_cascade(label="Options", menu = optionsMenu)
-    # optionsMenu.add_command(label="Restart Card", command = main())
+
+    root.mainloop()
+
+def makePopup2():
+    root = Tk()
+    root.geometry('471x687')
+    root.title("You Won!")
+    root.resizable(False, False)
+
+    bg = PhotoImage(file = "assets/youwin.jpg")
+    label1 = Label( root, image = bg)
+    label1.place(x = 0, y = 0)
+
+    # Create Frame
+    frame1 = Frame(root)
+    frame1.pack(pady = 20 )
+    size = 20    
     root.mainloop()
 
 def main():
     global displayedPopupYet
     pygame.init()
-    global score
+    global score, totalscore
     player = Player()
     win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     aGroup = pygame.sprite.Group(player)
@@ -246,7 +276,9 @@ def main():
                 if score >= 20 and not displayedPopupYet:
                     makePopup()
                     displayedPopupYet = True
-
+                if score >= 40 and not displayedPopup2Yet:
+                    makePopup2()
+                    displayedPopup2Yet = True
         enemies.update()
         pygame.display.update()
         fpsClock.tick(60)
